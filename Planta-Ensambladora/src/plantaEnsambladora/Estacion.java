@@ -7,7 +7,6 @@ public class Estacion extends Thread{
 	private boolean produce;
 	
 	public Estacion(String name, int operationTime, boolean produce) {
-		super();
 		this.stationName = name;
 		this.operationTime = operationTime;
 		this.produce = produce;
