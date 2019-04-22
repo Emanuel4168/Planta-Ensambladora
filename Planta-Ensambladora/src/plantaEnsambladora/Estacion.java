@@ -17,14 +17,12 @@ public class Estacion extends Thread{
 		this.stationNumber = stationNumber;
 		this.operationTime = operationTime;
 		this.produce = produce;
-		robots = new Vector<Vector<Robot>>();
-		if(robots.size() < 1)
+		if(robots == null)
 			initializeRobots();
 	}
 	
-	//private static final int[] NUMBER_ROBOTS = {5,6,3,3};
-	
 	private void  initializeRobots() {
+		robots = new Vector<Vector<Robot>>();
 		Vector<Robot> temp;
 		for(byte i = 0; i < robotsPerStation.length ; i++) {
 			temp = new Vector<Robot>();
@@ -97,6 +95,22 @@ public class Estacion extends Thread{
 
 	public void setProduce(boolean produce) {
 		this.produce = produce;
+	}
+	
+//	public int[] getInitialRobots() {
+//		int [] initialRobots = new int[7];
+//		for(int i = 0; i <initialRobots.length; i++) {
+//			if(stationNumber <= robots.get(i).size()) {
+//				initialRobots[i] = 1;
+//				continue;
+//			}
+//			initialRobots[i] = 0;
+//		}
+//		return initialRobots;
+//	}
+	
+	public static  Vector<Vector<Robot>> getRobots() {
+		return robots;
 	}
 	
 }
