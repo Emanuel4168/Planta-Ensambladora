@@ -17,7 +17,7 @@ public class PlantaEnsambladoraView extends JFrame{
 		lineas = new Vector<Linea>();
 		for(int i = 1; i <= totalLines; i++) {
 			Linea l = new Linea(i);
-			l.setBackground(COLORS[i]);
+			l.getView().setBackground(COLORS[i]);
 			lineas.add(l);
 		}
 		
@@ -25,6 +25,7 @@ public class PlantaEnsambladoraView extends JFrame{
 		setSize(800,600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
+		lineas.get(0).start();
 	}
 	
 	private void createCenterPane() {
@@ -32,12 +33,8 @@ public class PlantaEnsambladoraView extends JFrame{
 		lineas.forEach(linea ->{
 //			System.out.println("XXX");
 			linea.setInitialRobots();
-			centerPane.add(linea);
+			centerPane.add(linea.getView());
 		});
 		add(centerPane,BorderLayout.CENTER);
-	}
-	
-	private void moveCar(int line, int station) {
-		
 	}
 }
