@@ -8,14 +8,12 @@ public class Estacion{
 	private int stationNumber;
 	private int operationTime;
 	private boolean produce;
-	private Linea motherLine;
 	
-	public Estacion(String name, int stationNumber, int operationTime, boolean produce, Linea motherLine) {
+	public Estacion(String name, int stationNumber, int operationTime, boolean produce) {
 		this.stationName = name;
 		this.stationNumber = stationNumber;
 		this.operationTime = operationTime;
 		this.produce = produce;
-		this.motherLine = motherLine;
 	}
 
 	public String getStationName() {

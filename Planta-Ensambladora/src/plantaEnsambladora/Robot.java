@@ -3,6 +3,7 @@ package plantaEnsambladora;
 public class Robot {
 	private boolean isReady;
 	private Semaforo semaphore;
+	private Linea lastLine;
 	
 	public Robot() {
 		this.isReady = true;
@@ -25,5 +26,13 @@ public class Robot {
 
 	public Semaforo getSemaphore() {
 		return semaphore;
+	}
+	
+	public Linea getLastLine() {
+		return lastLine;
+	}
+
+	public void setLastLine(Linea motherLine) {
+		this.lastLine = motherLine;
 	}
 }

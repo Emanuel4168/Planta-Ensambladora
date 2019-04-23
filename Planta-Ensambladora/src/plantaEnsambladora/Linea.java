@@ -12,8 +12,9 @@ public class Linea extends Thread{
 	private Vector<Estacion> stations;	
 	private static Vector<Vector<Robot>> robots;
 	private static int[] robotsPerStation = {5,4,2,3,3,0,0};
-
 	private JLabel[][] lineRows;
+	
+	private static int totalCars = 0;
 	private final String[] IMAGE_NAMES = {"robot.png","car_step1.png","car_step2.png","car_step3.png","car_step4.png","car_step5.png","car_step6.png"};
 
 	public Linea(int lineNumber) {
@@ -30,13 +31,13 @@ public class Linea extends Thread{
 
 	private void initializeStations() {
 		stations = new Vector<Estacion>();
-		stations.add(new Estacion("Chasis y cableado",1,2000,true,this));
-		stations.add(new Estacion("Motor",2,600,true,this));
-		stations.add(new Estacion("Transmision",3,400,true,this));
-		stations.add(new Estacion("Carroceria",4,1000,true,this));
-		stations.add(new Estacion("Interiores",5,500,true,this));
-		stations.add(new Estacion("Llantas",6,500,true,this));
-		stations.add(new Estacion("Puertas",7,1000,true,this));
+		stations.add(new Estacion("Chasis y cableado",1,2000,true));
+		stations.add(new Estacion("Motor",2,600,true));
+		stations.add(new Estacion("Transmision",3,400,true));
+		stations.add(new Estacion("Carroceria",4,1000,true));
+		stations.add(new Estacion("Interiores",5,500,true));
+		stations.add(new Estacion("Llantas",6,500,true));
+		stations.add(new Estacion("Puertas",7,1000,true));
 	}
 
 	private void initializeView() {
@@ -62,7 +63,7 @@ public class Linea extends Thread{
 		for(int i = 0; i < stations.size(); i++) {
 			if(lineNumber <= robots.get(i).size()) {
 				//				 System.out.println(stations.get(i).getStationNumber() +"  | "+robots.get(i).size()+"\n");
-				lineRows[0][i].setIcon(Rutinas.changeSize(IMAGE_NAMES[0], 30, 30));
+				lineRows[0][i].setIcon(Rutinas.changeSize(IMAGE_NAMES[0], 50, 50));
 			}
 		}
 	}
@@ -72,16 +73,12 @@ public class Linea extends Thread{
 		Vector<Robot> currentStationsRobots;
 		Robot robot = null;
 		Estacion station;
-		System.out.println(1);
-		while(true) {
-			System.out.println(2);
+		while(totalCars < 100) {
 			for(int i = 0; i < stations.size(); i++) {
-				System.out.println(3);
 				currentStationsRobots = robots.get(i);
 				station = stations.get(i);
 				
 				for(int j = 0; j < currentStationsRobots.size(); j++) {
-					System.out.println(4);
 					robot = currentStationsRobots.get(j);
 					robot.getSemaphore().Espera();
 					if(!robot.isReady()) {
@@ -99,9 +96,15 @@ public class Linea extends Thread{
 					continue;
 				}
 				
+				if(robot.getLastLine() != null)
+					robot.getLastLine().putRobot(station.getStationNumber(), false);
+				robot.setLastLine(this);
+				putRobot(station.getStationNumber(),true);
 				robot.operate(station.getOperationTime(),this);
 				updateLineStation(station.getStationNumber());
 				robot.setReady(true);
+				if(station.getStationNumber() == 7)
+					totalCars++;
 			}
 		}
 	}
@@ -129,6 +132,11 @@ public class Linea extends Thread{
 		robotsPerStation[robotsPerStation.length-2]++;
 		robotsPerStation[robotsPerStation.length-1]++;
 	}
+	
+	public void putRobot(int pos, boolean putOrDelete) {
+		lineRows[0][pos-1].setIcon((putOrDelete)? Rutinas.changeSize(IMAGE_NAMES[0], 50, 50):null);
+	}
+
 	
 }
 
