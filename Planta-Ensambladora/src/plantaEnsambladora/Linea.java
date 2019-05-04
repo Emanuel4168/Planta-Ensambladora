@@ -13,6 +13,7 @@ public class Linea extends Thread{
 	private static Vector<Vector<Robot>> robots;
 	private static int[] robotsPerStation = {5,4,2,3,3,0,0};
 	private JLabel[][] lineRows;
+	private static Semaforo totalCarsSemaphore;
 	
 	private static int totalCars = 0;
 	private final String[] IMAGE_NAMES = {"robot.png","car_step1.png","car_step2.png","car_step3.png","car_step4.png","car_step5.png","car_step6.png"};
@@ -24,6 +25,8 @@ public class Linea extends Thread{
 		lineRows = new JLabel[2][7];
 		if(robots == null)
 			initializeRobots();
+		if(totalCarsSemaphore == null)
+			totalCarsSemaphore = new Semaforo(1);
 		initializeView();
 		initializeStations();
 		updateRobots();
@@ -73,10 +76,26 @@ public class Linea extends Thread{
 		Vector<Robot> currentStationsRobots;
 		Robot robot = null;
 		Estacion station;
-		while(totalCars < 100) {
+		while(true) {
+			totalCarsSemaphore.Espera();
+			if(totalCars >= 20) {
+				totalCarsSemaphore.Libera();
+				return;
+			}
+			totalCars++;
+			System.out.println("Total cars :"+totalCars);
+			totalCarsSemaphore.Libera();
+			
 			for(int i = 0; i < stations.size(); i++) {
 				currentStationsRobots = robots.get(i);
 				station = stations.get(i);
+				
+				if(i == 5 || i == 6) {
+					robot = currentStationsRobots.get(station.getStationNumber()-1);	
+					robot.operate(station.getOperationTime(),this);
+					updateLineStation(station.getStationNumber());
+					continue;
+				}
 				
 				for(int j = 0; j < currentStationsRobots.size(); j++) {
 					robot = currentStationsRobots.get(j);
@@ -103,8 +122,7 @@ public class Linea extends Thread{
 				robot.operate(station.getOperationTime(),this);
 				updateLineStation(station.getStationNumber());
 				robot.setReady(true);
-				if(station.getStationNumber() == 7)
-					totalCars++;
+				
 			}
 		}
 	}
@@ -119,7 +137,7 @@ public class Linea extends Thread{
 		for(byte i = 0; i < robotsPerStation.length ; i++) {
 			temp = new Vector<Robot>();
 			for(byte j = 0;j < robotsPerStation[i]; j++)
-				temp.add(new Robot());
+				temp.add(new Robot(j+1));
 			robots.add(temp);
 		}
 		robots.add(new Vector<Robot>());
@@ -127,8 +145,8 @@ public class Linea extends Thread{
 	}
 	
 	public static void updateRobots() {
-		robots.get(robotsPerStation.length-2).addElement(new Robot());
-		robots.get(robotsPerStation.length-1).addElement(new Robot());
+		robots.get(Robot.TYPE_LLANTAS).addElement(new Robot(Robot.TYPE_LLANTAS));
+		robots.get(Robot.TYPE_PRUEBAS).addElement(new Robot(Robot.TYPE_PRUEBAS));
 		robotsPerStation[robotsPerStation.length-2]++;
 		robotsPerStation[robotsPerStation.length-1]++;
 	}
